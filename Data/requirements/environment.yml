@@ -1,0 +1,11 @@
+name: Recombina
+channels:
+  - defaults
+dependencies:
+  - python=3.13
+  - biopython
+  - matplotlib
+  - numpy
+  - openpyxl
+  - pandas
+  - pyqt
