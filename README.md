@@ -822,7 +822,7 @@ If you hit problems:
 If you use this tool in research, please cite:
 
 ```
-Poyer, A., Feehley, M. C, & Feehley, P. J. (2026). Recombina: A toolkit for viral recombination and SNP matching analysis (Version 1.0.0) [Computer software]. GitHub. https://github.com/Hocket/Recombina
+Poyer, A. T, Feehley, M. C, & Feehley, P. J. (2026). Recombina: A toolkit for viral recombination and SNP matching analysis (Version 1.0.0) [Computer software]. GitHub. https://github.com/Hocket/Recombina
 ```
 
 ---
