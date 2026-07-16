@@ -211,13 +211,13 @@ The easiest method — we provide an environment file:
 conda env create -f Data/requirements/environment.yml
 ```
 
-This creates an environment called `viral-recombinant` with all dependencies.
+This creates an environment called `Recombina` with all dependencies.
 
 **If the environment file doesn't exist, create one manually:**
 
 ```bash
-conda create -n viral-recombinant python=3.10 -y
-conda activate viral-recombinant
+conda create -n Recombina python=3.10 -y
+conda activate Recombina
 pip install -r Data/requirements/requirements.txt
 pip install tqdm
 ```
@@ -227,10 +227,10 @@ pip install tqdm
 Every time you want to use the tool, activate the conda environment:
 
 ```bash
-conda activate viral-recombinant
+conda activate Recombina
 ```
 
-You'll know it worked when you see `(viral-recombinant)` in your prompt instead of `(base)` or nothing.
+You'll know it worked when you see `(Recombina)` in your prompt instead of `(base)` or nothing.
 
 ### Step 5: Install Additional Tools via Conda (Optional)
 
@@ -309,18 +309,18 @@ conda env export > my_environment.yml
 
 **Remove an environment (if you don't need it):**
 ```bash
-conda env remove -n viral-recombinant
+conda env remove -n Recombina
 ```
 
 **Update all packages in the environment:**
 ```bash
-conda activate viral-recombinant
+conda activate Recombina
 conda update --all
 ```
 
 **List installed packages:**
 ```bash
-conda activate viral-recombinant
+conda activate Recombina
 conda list
 ```
 
@@ -822,6 +822,7 @@ If you hit problems:
 If you use this tool in research, please cite:
 
 ```
+Poyer, A., Feehley, M. C, & Feehley, P. J. (2026). Recombina: A toolkit for viral recombination and SNP matching analysis (Version 1.0.0) [Computer software]. GitHub. https://github.com/Hocket/Recombina
 ```
 
 ---
