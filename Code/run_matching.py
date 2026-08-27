@@ -276,6 +276,11 @@ def main(
     stdout, stderr = proc.communicate()
     monitor_thread.join()
 
+    # Re-resolve the case now that Haploview has actually finished writing
+    haploview_ld = Path(str(haploview_ped) + ".LD")
+    if not haploview_ld.exists():
+        haploview_ld = Path(str(haploview_ped) + ".ld")
+        
     if proc.returncode != 0:
         print("ERROR: Haploview failed:", file=sys.stderr)
         print(stderr, file=sys.stderr)
