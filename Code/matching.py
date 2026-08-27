@@ -396,11 +396,15 @@ def highlight_group_cells(df, colors):
     group_to_color = {group: colors[i] for i, group in enumerate(groups_sorted)}
 
     def row_style(row):
+        # Unique recombinants with no progeny (no group assigned) — same red used for these tips in the colored tree
+        if isinstance(row["UniqueRecombinant"], str) and row["UniqueRecombinant"].lower() == "unique" and pd.isna(row["Group"]):
+            return ["background-color: #ff0000; color: #FFFFFF"] * len(row)
+
         # FIX: Force sequences with 0 recombinant pairs to be styled light gray
         # Use a light gray background and dark text so cells remain readable
         if row["Num Pairs"] == 0:
             return ["background-color: #D3D3D3; color: #000000"] * len(row)
-
+        
         color = group_to_color.get(row["Group"], "")
         return [color] * len(row)
 
