@@ -74,7 +74,7 @@ def monitor_ld_file(ld_path: Path, predicted_total: int, proc: subprocess.Popen,
     if has_tqdm:
         pbar = tqdm(total=predicted_total if predicted_total > 0 else None, unit="pairs", desc="Haploview LD")
     else:
-        print("Monitoring LD file -- high estimation (press Ctrl-C to stop)...")
+        print("Monitoring LD file (press Ctrl-C to stop)...")
 
     # loop until process ends and file stabilizes
     while True:
@@ -194,13 +194,13 @@ def main(
     if keep_intermediate:
         ped_path = run_dir / f"{alignment_file.stem}_ped.txt"
         info_path = run_dir / f"{alignment_file.stem}_info.txt"
-        recombinant_path = run_dir / f"{alignment_file.stem}_haploview"
+        recombinant_path = run_dir / f"{alignment_file.stem}_haploview_ld.txt"
     else:
         tempdir = tempfile.TemporaryDirectory()
         ped_path = Path(tempdir.name) / f"{alignment_file.stem}_ped.txt"
         info_path = Path(tempdir.name) / f"{alignment_file.stem}_info.txt"
         recombinant_path = (
-            Path(tempdir.name) / f"{alignment_file.stem}_haploview"
+            Path(tempdir.name) / f"{alignment_file.stem}_haploview_ld.txt"
         )
 
     ftp.fasta_to_ped(
@@ -243,8 +243,6 @@ def main(
         haploview_ped = ped_path
         haploview_info = info_path
 
-    haploview_prefix = run_dir / haploview_ped.stem
-
     haploview_cmd = [
         "java",
         "-jar",
@@ -255,21 +253,21 @@ def main(
         "-info",
         str(haploview_info),
         "-dprime",
-        "-out",
-        str(recombinant_path),
     ]
 
     print("Running:", " ".join(haploview_cmd))
 
     # Start Haploview as subprocess and monitor the LD file it writes
     proc = subprocess.Popen(haploview_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    # Find the LD file that Haploview will create
-    haploview_ld = run_dir / f"{haploview_prefix.name}.LD"
 
     # Predict total pairs (upper bound) from the INFO file located in run_dir
     predicted_total = predict_total_pairs_from_info(haploview_info)
 
-    # Monitor the LD file as it's being written
+    # Haploview will write its LD file using the ped filename in OUTPUT_DIR
+    haploview_ld = Path(str(haploview_ped) + ".LD")
+    if not haploview_ld.exists():
+        haploview_ld = Path(str(haploview_ped) + ".ld")
+
     monitor_thread = threading.Thread(target=monitor_ld_file, args=(haploview_ld, predicted_total, proc), daemon=True)
     monitor_thread.start()
 
@@ -307,45 +305,28 @@ def main(
                     pass
         sys.exit(1)
 
-    # Verify Haploview produced the LD file
-    #   naming/location can vary by Haploview version and JVM cwd.
+    # Verify Haploview produced the LD file at the expected location
     if not haploview_ld.exists():
-        candidates = list(run_dir.glob(f"{haploview_ped.stem}*.LD")) + \
-                     list(run_dir.glob(f"{haploview_ped.stem}*.ld"))
-
-        if not candidates:
-            # last resort: broaden the search
-            candidates = list(run_dir.glob("*.LD")) + list(run_dir.glob("*.ld"))
-
-        if candidates:
-            haploview_ld = candidates[0]
-        else:
-            print(
-                f"ERROR: Haploview did not produce expected LD file: {haploview_ld}",
-                file=sys.stderr,
-            )
-            print(f"Directory contents of {run_dir}:", file=sys.stderr)
-            for p in sorted(run_dir.iterdir()):
-                print(f"  {p.name}", file=sys.stderr)
-            print("Haploview stdout:", stdout, file=sys.stderr)
-            print("Haploview stderr:", stderr, file=sys.stderr)
-
-            if not keep_intermediate and "tempdir" in locals():
-                try:
-                    tempdir.cleanup()
-                finally:
-                    if copied_to_output and not keep_intermediate:
-                        try:
-                            if haploview_ped.exists():
-                                haploview_ped.unlink()
-                        except Exception:
-                            pass
-                        try:
-                            if haploview_info.exists():
-                                haploview_info.unlink()
-                        except Exception:
-                            pass
-            sys.exit(1)
+        print(
+            f"ERROR: Haploview did not produce expected LD file: {haploview_ld}",
+            file=sys.stderr,
+        )
+        if not keep_intermediate and "tempdir" in locals():
+            try:
+                tempdir.cleanup()
+            finally:
+                if copied_to_output and not keep_intermediate:
+                    try:
+                        if haploview_ped.exists():
+                            haploview_ped.unlink()
+                    except Exception:
+                        pass
+                    try:
+                        if haploview_info.exists():
+                            haploview_info.unlink()
+                    except Exception:
+                        pass
+        sys.exit(1)
 
     # Use the Haploview-written LD file directly as the recombinant_path
     recombinant_path = haploview_ld
