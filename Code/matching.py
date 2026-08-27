@@ -427,16 +427,13 @@ def getColors(num_groups, alpha=1.0, prefix=None):
     """
     cmap = plt.get_cmap("tab20" if num_groups <= 20 else "hsv")
 
-    # Uses discrete indices instead of linspace to ensure distinct colors
-    n_colors = cmap.N  # total colors in the colormap
-
     if prefix is not None:
         prefix = prefix.strip() + ": "
     else:
         prefix = ""
 
     colors = [
-        prefix + blend_with_white(*cmap(i / n_colors)[:3], alpha=alpha)
+        prefix + blend_with_white(*cmap(i / num_groups)[:3], alpha=alpha)
         for i in range(num_groups)
     ]
     return colors
