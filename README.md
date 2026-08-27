@@ -75,9 +75,6 @@ Before you start, gather these tools. Don't worry — most are free and we'll gu
   - **On Mac:** `brew install iqtree` (If homebrew is installed)
   - **On Linux:** `apt install iqtree`
 
-- **tqdm** — Shows nice progress bars while running
-  - Installed automatically with pip in step 3 ✓
-
 ---
 
 ## Installation Guide
@@ -124,7 +121,6 @@ With the environment activated (you should see `(.venv)` in your prompt), run:
 
 ```bash
 pip install -r Data/requirements/requirements.txt
-pip install tqdm
 ```
 
 This installs all the Python libraries the tool needs. It may take 1-2 minutes.
@@ -219,7 +215,6 @@ This creates an environment called `Recombina` with all dependencies.
 conda create -n Recombina python=3.10 -y
 conda activate Recombina
 pip install -r Data/requirements/requirements.txt
-pip install tqdm
 ```
 
 ### Step 4: Activate the Environment
@@ -657,7 +652,6 @@ When the tool runs, you'll see output like:
 2. Reinstall packages:
    ```bash
    pip install -r Data/requirements/requirements.txt
-   pip install tqdm
    ```
 3. Try running again
 
