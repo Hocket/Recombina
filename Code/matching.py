@@ -432,7 +432,7 @@ def getColors(num_groups, alpha=1.0, prefix=None):
         prefix = ""
 
     colors = [
-        prefix + blend_with_white(*cmap(i % n_colors)[:3], alpha=alpha)
+        prefix + blend_with_white(*cmap(i / n_colors)[:3], alpha=alpha)
         for i in range(num_groups)
     ]
     return colors
